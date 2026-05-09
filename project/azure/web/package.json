@@ -1,0 +1,17 @@
+{
+  "name": "smart-retail-pro-azure-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Azure App Service backend and GUI host for Smart Retail Pro.",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@azure/storage-blob": "^12.27.0",
+    "mssql": "^11.0.1"
+  }
+}

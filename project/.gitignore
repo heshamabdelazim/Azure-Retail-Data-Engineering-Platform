@@ -1,0 +1,9 @@
+data/
+warehouse/
+reports/
+metadata/
+*.log
+*.tmp
+node_modules/
+azure/dist/
+.env

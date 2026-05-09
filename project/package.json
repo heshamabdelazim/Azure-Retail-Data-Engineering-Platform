@@ -1,0 +1,22 @@
+{
+  "name": "smart-retail-pro",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-contained Smart Retail Data Engineering platform with GUI, medallion pipeline, SQLite warehouse, and Windows launcher.",
+  "scripts": {
+    "start": "node --no-warnings app/server.mjs",
+    "pipeline": "node --no-warnings app/cli.mjs run",
+    "test": "node app/tests.mjs",
+    "python:pipeline": "py -3 app/python/smart_retail_pipeline.py run",
+    "python:test": "py -3 app/python/test_python_pipeline.py",
+    "report": "node --no-warnings tools/generate_project_report.mjs",
+    "presentation": "node --no-warnings tools/generate_project_presentation.mjs",
+    "presentation:code": "node --no-warnings tools/generate_project_presentation.mjs --code",
+    "presentation:specialized": "node --no-warnings tools/generate_specialized_presentations.mjs",
+    "azure:deploy": "powershell -ExecutionPolicy Bypass -File azure/scripts/deploy.ps1"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Retail Pro</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <aside>
+    <div class="brand"><b>Smart Retail Pro</b><span>Data Engineering Console</span></div>
+    <button class="active" data-view="overview">نظرة عامة</button>
+    <button data-view="run">تشغيل المشروع</button>
+    <button data-view="files">الملفات والكود</button>
+    <button data-view="db">قاعدة البيانات</button>
+    <button data-view="reports">التقارير</button>
+    <button data-view="assistant">المساعد</button>
+  </aside>
+  <main>
+    <header><div><small>Local Windows App</small><h1 id="title">نظرة عامة</h1></div><button id="refresh">تحديث</button></header>
+
+    <section id="overview" class="view active">
+      <div class="metrics" id="metrics"></div>
+      <div class="grid">
+        <article class="panel"><h2>خريطة المشروع</h2><div class="flow"><span>Source</span><span>Bronze</span><span>Silver</span><span>Gold</span><span>SQLite</span></div></article>
+        <article class="panel"><h2>وصول سريع</h2><div id="quick"></div></article>
+      </div>
+    </section>
+
+    <section id="run" class="view">
+      <div class="grid">
+        <article class="panel">
+          <h2>إعادة تشغيل Pipeline</h2>
+          <label>الأيام<input id="days" type="number" value="14"></label>
+          <label>العملاء<input id="customers" type="number" value="160"></label>
+          <label>المنتجات<input id="products" type="number" value="50"></label>
+          <button id="runPipeline" class="primary">تشغيل الآن</button>
+        </article>
+        <article class="panel"><h2>سجل التشغيل</h2><pre id="log">جاهز للتشغيل.</pre></article>
+      </div>
+    </section>
+
+    <section id="files" class="view">
+      <div class="files">
+        <article class="panel"><h2>المكونات</h2><div id="roots"></div><div id="tree"></div></article>
+        <article class="panel"><h2 id="fileName">اختر ملفًا</h2><pre id="fileContent">اختر ملفًا من الشجرة لعرض محتواه.</pre></article>
+      </div>
+    </section>
+
+    <section id="db" class="view">
+      <div class="files">
+        <article class="panel"><h2>Tables & Views</h2><div id="objects"></div></article>
+        <article class="panel"><h2>SQL</h2><textarea id="sql">SELECT * FROM vw_retail_kpi_scorecard;</textarea><button id="query" class="primary">تنفيذ</button><div id="result"></div></article>
+      </div>
+    </section>
+
+    <section id="reports" class="view">
+      <div class="grid">
+        <article class="panel wide"><h2>Dashboard</h2><iframe src="/project/reports/dashboard.html"></iframe></article>
+        <article class="panel"><h2>ملفات التقارير</h2><div id="reportsList"></div></article>
+      </div>
+    </section>
+
+    <section id="assistant" class="view">
+      <article class="panel"><h2>SQL Assistant</h2><textarea id="question">top products by revenue</textarea><button id="ask" class="primary">توليد SQL</button><pre id="answer"></pre></article>
+    </section>
+  </main>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
