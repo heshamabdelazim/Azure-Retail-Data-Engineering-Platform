@@ -1,11 +1,10 @@
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
-import { execFile } from "node:child_process";
+import { execFile, spawn, spawnSync } from "node:child_process";
 import { DatabaseSync } from "node:sqlite";
 import { paths, rootDir } from "./config.mjs";
 import { readJsonIfExists, safeRelative } from "./lib/fsx.mjs";
-import { runPipeline } from "./pipeline.mjs";
 
 const port = Number(readArg("--port") || 4173);
 const shouldOpen = process.argv.includes("--open");
@@ -160,21 +159,58 @@ function assistantSql(input) {
 function startPipeline(input) {
   if (operation.running) return operation;
   operation = { running: true, lines: [], exitCode: null, startedAt: new Date().toISOString(), finishedAt: null };
-  runPipeline(input, (line) => {
-    operation.lines.push(line);
+  
+  const py = getPythonCmd();
+  const args = [...py.args, path.join(rootDir, "app", "python", "smart_retail_pipeline.py"), "run"];
+  
+  if (input.days) args.push("--days", String(input.days));
+  if (input.customers) args.push("--customers", String(input.customers));
+  if (input.products) args.push("--products", String(input.products));
+  if (input.seed) args.push("--seed", String(input.seed));
+
+  const child = spawn(py.cmd, args, { cwd: rootDir, env: process.env });
+  
+  child.stdout.on("data", (data) => {
+    const lines = data.toString().split(/\r?\n/).filter(Boolean);
+    for (const line of lines) operation.lines.push(line);
     operation.lines = operation.lines.slice(-800);
-  }).then(() => {
+  });
+
+  child.stderr.on("data", (data) => {
+    const lines = data.toString().split(/\r?\n/).filter(Boolean);
+    for (const line of lines) operation.lines.push(`ERROR: ${line}`);
+    operation.lines = operation.lines.slice(-800);
+  });
+
+  child.on("close", (code) => {
     operation.running = false;
-    operation.exitCode = 0;
+    operation.exitCode = code;
     operation.finishedAt = new Date().toISOString();
-    operation.lines.push("Pipeline finished successfully.");
-  }).catch((error) => {
+    if (code === 0) {
+      operation.lines.push("Pipeline finished successfully.");
+    } else {
+      operation.lines.push(`Pipeline failed with exit code ${code}.`);
+    }
+  });
+
+  child.on("error", (error) => {
     operation.running = false;
     operation.exitCode = 1;
     operation.finishedAt = new Date().toISOString();
     operation.lines.push(`ERROR: ${error.message}`);
   });
+
   return operation;
+}
+
+function getPythonCmd() {
+  const isWin = process.platform === "win32";
+  if (isWin) {
+    if (spawnSync("py", ["-3", "--version"]).status === 0) return { cmd: "py", args: ["-3"] };
+  }
+  if (spawnSync("python3", ["--version"]).status === 0) return { cmd: "python3", args: [] };
+  if (spawnSync("python", ["--version"]).status === 0) return { cmd: "python", args: [] };
+  return { cmd: "python", args: [] };
 }
 
 function databaseCounts() {
