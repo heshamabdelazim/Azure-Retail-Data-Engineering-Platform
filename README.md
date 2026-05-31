@@ -1,3 +1,4 @@
+#🔴🟢DEPI-Graduation_Project
 # Smart Retail Pro
 
 A completely new version of the **Smart Retail Data Engineering Platform** project that runs locally with an easy-to-use graphical interface.
